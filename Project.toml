@@ -1,0 +1,14 @@
+name = "LagrangeInterpolation1D"
+uuid = "d32cb302-a956-591b-8d53-254f0a948d40"
+authors = [
+    "Katharina Kormann <k.kormann@rub.de>",
+    " Pierre Navaro <navaro@math.cnrs.fr>",
+    " Klaus Reuter <khr@mpcdf.mpg.de> ",
+]
+version = "0.1.0"
+
+[workspace]
+projects = ["test", "docs"]
+
+[compat]
+julia = "1.10"
