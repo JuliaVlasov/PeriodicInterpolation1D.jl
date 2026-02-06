@@ -6,7 +6,8 @@
 [![Coverage](https://codecov.io/gh/juliavlasov/LagrangeInterpolation1D.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/juliavlasov/LagrangeInterpolation1D.jl)
 [![Docs workflow Status](https://github.com/juliavlasov/LagrangeInterpolation1D.jl/actions/workflows/Docs.yml/badge.svg?branch=main)](https://github.com/juliavlasov/LagrangeInterpolation1D.jl/actions/workflows/Docs.yml?query=branch%3Amain)
 [![BestieTemplate](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/JuliaBesties/BestieTemplate.jl/main/docs/src/assets/badge.json)](https://github.com/JuliaBesties/BestieTemplate.jl)
-Julia translation of the Fortran module `sll_m_lagrange_interpolation_1d_fast.F90`.
+
+Julia translation of the Fortran module `sll_m_lagrange_interpolation_1d_fast.F90` from [SeLaLib](https://selalib.github.io).
 
 ## Overview
 
