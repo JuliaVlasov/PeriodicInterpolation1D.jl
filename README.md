@@ -9,6 +9,13 @@
 
 Julia translation of the Fortran module `sll_m_lagrange_interpolation_1d_fast.F90` from [SeLaLib](https://selalib.github.io).
 
+I use this to test some tools for Julia packages such as:
+
+   - [BestieTemplate.jl](https://github.com/JuliaBesties/BestieTemplate.jl)
+   - [BenchmarkTools.jl](https://github.com/JuliaCI/BenchmarkTools.jl)
+   - [BenchmarkCI.jl](https://github.com/tkf/BenchmarkCI.jl)
+   - [PkgBenchmark.jl](https://github.com/JuliaCI/PkgBenchmark.jl)
+
 ## Overview
 
 This module provides fast 1D Lagrange interpolation functions for uniform grids. It supports both odd-order (3, 5, 7, 9, 11 points) and even-order (4, 6, 8 points) interpolation stencils with various boundary condition treatments.
