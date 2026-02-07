@@ -207,20 +207,28 @@ function lagr_5pt_coeff(pp, p)
     pp[5] = p*(p + 1.0)*(p + 2.0)*(p - 1.0)*inv_24
 end
 
-function lagr_5pt(fm2, fm1, f0, f1, f2, p)
-    pp = Vector{Float64}(undef, 5)
-    lagr_5pt_coeff(pp, p)
+function lagr_5pt(fm2, fm1, f0, f1, f2, p, pp)
     return pp[1]*fm2 + pp[2]*fm1 + pp[3]*f0 + pp[4]*f1 + pp[5]*f2
 end
 
-function lagr_5pt_vec(fi, fp, p)
+function lagr_5pt(fm2, fm1, f0, f1, f2, p)
     pp = Vector{Float64}(undef, 5)
     lagr_5pt_coeff(pp, p)
+    lagr_5pt(fm2, fm1, f0, f1, f2, p, pp)
+end
+
+function lagr_5pt_vec(fi, fp, p, pp)
     n = length(fi)
     for i = 3:n-2
         fp[i] = pp[1]*fi[i-2] + pp[2]*fi[i-1] + pp[3]*fi[i] +
                 pp[4]*fi[i+1] + pp[5]*fi[i+2]
     end
+end
+
+function lagr_5pt_vec(fi, fp, p)
+    pp = Vector{Float64}(undef, 5)
+    lagr_5pt_coeff(pp, p)
+    lagr_5pt_vec(fi, fp, p, pp)
 end
 
 function lagr_7pt_coeff(pp, p)
@@ -380,11 +388,13 @@ function lagrange_interpolation_1d_fast_disp_fixed_periodic(fi, fp, p, stencil)
         fp[n-1] = lagr_7pt(fi[n-4], fi[n-3], fi[n-2], fi[n-1], fi[n], fi[1], fi[2], p)
         fp[n] = lagr_7pt(fi[n-3], fi[n-2], fi[n-1], fi[n], fi[1], fi[2], fi[3], p)
     elseif stencil == 5
-        fp[1] = lagr_5pt(fi[n-1], fi[n], fi[1], fi[2], fi[3], p)
-        fp[2] = lagr_5pt(fi[n], fi[1], fi[2], fi[3], fi[4], p)
-        lagr_5pt_vec(fi, fp, p)
-        fp[n-1] = lagr_5pt(fi[n-3], fi[n-2], fi[n-1], fi[n], fi[1], p)
-        fp[n] = lagr_5pt(fi[n-2], fi[n-1], fi[n], fi[1], fi[2], p)
+        pp = Vector{Float64}(undef, 5)
+        lagr_5pt_coeff(pp, p)
+        fp[1] = lagr_5pt(fi[n-1], fi[n], fi[1], fi[2], fi[3], p, pp)
+        fp[2] = lagr_5pt(fi[n], fi[1], fi[2], fi[3], fi[4], p, pp)
+        lagr_5pt_vec(fi, fp, p, pp)
+        fp[n-1] = lagr_5pt(fi[n-3], fi[n-2], fi[n-1], fi[n], fi[1], p, pp)
+        fp[n] = lagr_5pt(fi[n-2], fi[n-1], fi[n], fi[1], fi[2], p, pp)
     elseif stencil == 3
         fp[1] = lagr_3pt(fi[n], fi[1], fi[2], p)
         lagr_3pt_vec(fi, fp, p)

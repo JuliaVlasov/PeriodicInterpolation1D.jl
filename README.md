@@ -9,12 +9,13 @@
 
 Julia translation of the Fortran module `sll_m_lagrange_interpolation_1d_fast.F90` from [SeLaLib](https://selalib.github.io).
 
-I use this to test some tools for Julia packages such as:
+I use this to test some Julia packages for software engineering such as:
 
    - [BestieTemplate.jl](https://github.com/JuliaBesties/BestieTemplate.jl)
    - [BenchmarkTools.jl](https://github.com/JuliaCI/BenchmarkTools.jl)
    - [BenchmarkCI.jl](https://github.com/tkf/BenchmarkCI.jl)
    - [PkgBenchmark.jl](https://github.com/JuliaCI/PkgBenchmark.jl)
+   - [TestItemRunner](https://github.com/julia-vscode/TestItemRunner.jl)
 
 ## Overview
 
