@@ -23,20 +23,22 @@ module LagrangeInterpolation1D
 export lagrange_interpolation_1d_fast_disp_fixed_periodic
 
 # compile-time constants to avoid run-time division
-const inv_120 = 1.0/120.0
-const inv_144 = 1.0/144.0
-const inv_240 = 1.0/240.0
-const inv_576 = 1.0/576.0
-const inv_720 = 1.0/720.0
-const inv_1440 = 1.0/1440.0
-const inv_5040 = 1.0/5040.0
-const inv_14400 = 1.0/14400.0
-const inv_17280 = 1.0/17280.0
-const inv_30240 = 1.0/30240.0
-const inv_40320 = 1.0/40320.0
-const inv_80640 = 1.0/80640.0
-const inv_362880 = 1.0/362880.0
-const inv_3628800 = 1.0/3628800.0
+const inv_6 = 1.0 / 6.0
+const inv_12 = 1.0 / 12.0
+const inv_24 = 1.0 / 24.0
+const inv_36 = 1.0 / 36.0
+const inv_48 = 1.0 / 48.0
+const inv_120 = 1.0 / 120.0
+const inv_144 = 1.0 / 144.0
+const inv_240 = 1.0 / 240.0
+const inv_576 = 1.0 / 576.0
+const inv_720 = 1.0 / 720.0
+const inv_1440 = 1.0 / 1440.0
+const inv_5040 = 1.0 / 5040.0
+const inv_14400 = 1.0 / 14400.0
+const inv_17280 = 1.0 / 17280.0
+const inv_30240 = 1.0 / 30240.0
+const inv_40320 = 1.0 / 40320.0
 const inv_80640 = 1.0 / 80640.0
 const inv_362880 = 1.0 / 362880.0
 const inv_3628800 = 1.0 / 3628800.0
@@ -207,8 +209,6 @@ function lagrange_interpolation_1d_fast_disp_fixed_periodic(fi, fp, p, stencil)
         fp[1] = lagr_3pt(fi[n], fi[1], fi[2], p)
         lagr_3pt_vec(fi, fp, p)
         fp[n] = lagr_3pt(fi[n - 1], fi[n], fi[1], p)
-    else
-        error("lagrange_interpolation_1d_fast_disp_fixed_periodic: Lagrange stencil not implemented.")
     end
 end
 
