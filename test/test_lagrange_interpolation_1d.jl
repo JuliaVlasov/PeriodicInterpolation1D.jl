@@ -67,7 +67,8 @@ using LagrangeInterpolation1D
         pmessage = string(order)
 
         println("Test fixed_periodic with order ", pmessage, " .")
-        lagrange_interpolation_1d_fast_disp_fixed_periodic(fi, fp, alpha, order)
+        interpolant = LagrangeInterpolant1D(order)
+        interpolate!(fp, interpolant, fi, alpha)
 
         for i in 1:num_points
             diff = max(diff, abs(f(xp[i], num_points) - fp[i]))

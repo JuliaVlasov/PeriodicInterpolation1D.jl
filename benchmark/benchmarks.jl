@@ -21,6 +21,10 @@ for i in 1:num_points
     xp[i] = xi[i] + alpha
 end
 
-SUITE["periodic_3"] = @benchmarkable lagrange_interpolation_1d_fast_disp_fixed_periodic(fi, fp, alpha, 3)
-SUITE["periodic_5"] = @benchmarkable lagrange_interpolation_1d_fast_disp_fixed_periodic(fi, fp, alpha, 5)
-SUITE["periodic_7"] = @benchmarkable lagrange_interpolation_1d_fast_disp_fixed_periodic(fi, fp, alpha, 7)
+interpolant3 = LagrangeInterpolant1D(3)
+interpolant5 = LagrangeInterpolant1D(5)
+interpolant7 = LagrangeInterpolant1D(7)
+
+SUITE["periodic_3"] = @benchmarkable interpolate!(fp, interpolant3, alpha)
+SUITE["periodic_5"] = @benchmarkable interpolate!(fp, interpolant5, alpha)
+SUITE["periodic_7"] = @benchmarkable interpolate!(fp, interpolant7, alpha)

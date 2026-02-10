@@ -37,40 +37,17 @@ Include the module in your Julia code:
 
 ```julia
 using LagrangeInterpolation1D
-include("test/test/test_lagrange_interpolation_1d.jl")
 ```
 
 ## Quick Start Examples
 
-### Example 1: Simple Interpolation (No Boundary Conditions)
-
-```julia
-n = 100
-fi = randn(n)
-fp = zeros(n)
-
-lagrange_interpolation_1d_fast_disp_fixed_no_bc(fi, fp, 0.3, 5)
-```
-
-### Example 2: Periodic Boundary Conditions
+### Example: Periodic Boundary Conditions
 
 ```julia
 n = 100
 fi = sin.(range(0, 2π, length=n))
 fp = zeros(n)
-
-lagrange_interpolation_1d_fast_disp_fixed_periodic(fi, fp, 0.5, 7)
-```
-
-## Running Tests
-
-```bash
-julia test_lagrange_interpolation_1d_fast.jl
-```
-
-Expected output: `PASSED.`
-
-See full documentation in the module docstrings using Julia's help system:
-```julia
-?lagrange_interpolation_1d_fast_disp_fixed_no_bc
+interpolant = LagrangeInterpolant1D(7)
+displacement = 0.5
+interpolate!(fp, interpolant, fi, displacement)
 ```

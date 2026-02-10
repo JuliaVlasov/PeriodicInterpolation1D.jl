@@ -33,7 +33,8 @@ function advection!(
     for j in 1:nv
         fi = view(f, :, j)
         alpha = - dt * v[j] / dx
-        lagrange_interpolation_1d_fast_disp_fixed_periodic(fi, fp, alpha, p)
+        interpolant = Lagrange(p)
+        interpolate!(fp, interpolant, fi, alpha)
         f[:, j] .= fp
     end
 
@@ -56,7 +57,7 @@ end
 " compute Ex using that -ik*Ex = rho "
 function compute_e(meshx::UniformMesh, rho::Vector{Float64})
     nx = meshx.nx
-    k = 2 * pi / (meshx.xmax - meshx.xmin)
+    k = 2pi / (meshx.xmax - meshx.xmin)
     modes = zeros(Float64, nx)
     modes .= k * fftfreq(nx, nx)
     modes[1] = 1.0
@@ -87,7 +88,7 @@ function landau(dt, nt::Int64)
 
     eps, kx = 0.001, 0.5
     f = zeros(Float64, (nx, nv))
-    f .= (1.0 .+ eps * cos.(kx * x)) / sqrt(2π) * transpose(exp.(-0.5 * v .^ 2))
+    f .= (1.0 .+ eps * cos.(kx * x)) / sqrt(2π) .* transpose(exp.(-0.5 * v .^ 2))
     fᵗ = zeros(Float64, (nv, nx))
 
     rho = compute_rho(meshv, f)
