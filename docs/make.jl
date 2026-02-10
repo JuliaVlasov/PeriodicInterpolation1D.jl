@@ -1,5 +1,8 @@
 using LagrangeInterpolation1D
 using Documenter
+using Plots
+
+ENV["GKSwstype"] = "100"
 
 DocMeta.setdocmeta!(LagrangeInterpolation1D, :DocTestSetup, :(using LagrangeInterpolation1D); recursive = true)
 
