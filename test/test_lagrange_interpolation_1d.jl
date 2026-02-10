@@ -22,12 +22,11 @@ If any test fails, the program prints "FAILED."
 
 using LagrangeInterpolation1D
 
-
 @testmodule CommonHelpers begin
+
 
     using LagrangeInterpolation1D
 
-    f(x::Float64, num_points::Int) = cos(2 * π * x / num_points)
 
     """
         test_interpolation(num_points, fi, alpha, xp, order, type, tolerance) -> Bool
@@ -55,6 +54,7 @@ using LagrangeInterpolation1D
     and checks if error is within tolerance.
     """
     function test_interpolation(
+            f::Function,
             num_points::Int, fi::Vector{Float64}, alpha::Float64,
             xp::Vector{Float64}, order::Int,
             tolerance::Float64
@@ -85,6 +85,7 @@ end
 @testsnippet SharedData begin
 
     f(x::Float64, num_points::Int) = cos(2 * π * x / num_points)
+    g(x::Float64, num_points::Int) = sin(2 * π * x / num_points)
 
     num_points = 100
     alpha = 0.2
@@ -92,6 +93,7 @@ end
     # Allocate arrays
     xi = zeros(Float64, num_points)
     fi = zeros(Float64, num_points)
+    gi = zeros(Float64, num_points)
     xp = zeros(Float64, num_points)
 
     # Data initialization
@@ -102,6 +104,7 @@ end
     for i in 1:(num_points)
         xi[i] = Float64(i - 1)
         fi[i] = f(xi[i], num_points)
+        gi[i] = g(xi[i], num_points)
         xp[i] = xi[i] + alpha
     end
 
@@ -109,9 +112,26 @@ end
 
 # Run tests
 @testitem "periodic order 3" tags = [:Lagrange] setup = [CommonHelpers, SharedData] begin
-    @test CommonHelpers.test_interpolation(num_points, fi, alpha, xp, 3, 8.0e-6)
+    @test CommonHelpers.test_interpolation(f, num_points, fi, alpha, xp, 3, 8.0e-6)
+    @test CommonHelpers.test_interpolation(g, num_points, gi, alpha, xp, 3, 1.0e-2)
 end
 
 @testitem "periodic order 5" tags = [:Lagrange] setup = [CommonHelpers, SharedData]  begin
-    @test CommonHelpers.test_interpolation(num_points, fi, alpha, xp, 5, 1.0e-8)
+    @test CommonHelpers.test_interpolation(f, num_points, fi, alpha, xp, 5, 1.0e-8)
+    @test CommonHelpers.test_interpolation(g, num_points, gi, alpha, xp, 5, 1.0e-8)
+end
+
+@testitem "periodic order 7" tags = [:Lagrange] setup = [CommonHelpers, SharedData]  begin
+    @test CommonHelpers.test_interpolation(f, num_points, fi, alpha, xp, 7, 1.0e-8)
+    @test CommonHelpers.test_interpolation(g, num_points, gi, alpha, xp, 7, 1.0e-8)
+end
+
+@testitem "periodic order 9" tags = [:Lagrange] setup = [CommonHelpers, SharedData]  begin
+    @test CommonHelpers.test_interpolation(f, num_points, fi, alpha, xp, 9, 1.0e-14)
+    @test CommonHelpers.test_interpolation(g, num_points, gi, alpha, xp, 9, 1.0e-14)
+end
+
+@testitem "periodic order 11" tags = [:Lagrange] setup = [CommonHelpers, SharedData]  begin
+    @test CommonHelpers.test_interpolation(f, num_points, fi, alpha, xp, 11, 1.0e-14)
+    @test CommonHelpers.test_interpolation(g, num_points, gi, alpha, xp, 11, 1.0e-14)
 end
