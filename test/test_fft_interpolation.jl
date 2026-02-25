@@ -3,9 +3,9 @@ using Test
 @testitem "FFT interpolation" begin
     N = 100
     alpha = 0.2
-    u = Float64[cos(2π * (i - 1) / N) for i in 1:N]
+    u = Float64[cos(2π * (i - 1) / N) for i = 1:N]
     u_out = zeros(N)
-    expected = Float64[cos(2π * ((i - 1) + alpha) / N) for i in 1:N]
+    expected = Float64[cos(2π * ((i - 1) + alpha) / N) for i = 1:N]
 
     work = FFTInterpolant1D(N)
 
