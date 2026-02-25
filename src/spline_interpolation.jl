@@ -94,9 +94,8 @@ function interpolate!(
    end
    eigalpha = zeros(Complex{Float64}, nx)
     
+   ut = fft(u)
     
-    work.eigenvalues_S .= 0.0
-    offset = (p + 1) ÷ 2
    # compute eigenvalues of cubic splines evaluated 
    # at displaced points
    ishift = floor(-alpha)
