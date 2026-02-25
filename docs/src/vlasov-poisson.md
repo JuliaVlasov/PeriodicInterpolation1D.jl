@@ -3,7 +3,7 @@
 ```@example vp1d1v
 using Plots
 using FFTW
-using LagrangeInterpolation1D
+using PeriodicInterpolation1D
 using LinearAlgebra
 import Statistics: mean
 

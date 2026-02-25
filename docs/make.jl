@@ -1,10 +1,10 @@
-using LagrangeInterpolation1D
+using PeriodicInterpolation1D
 using Documenter
 using Plots
 
 ENV["GKSwstype"] = "100"
 
-DocMeta.setdocmeta!(LagrangeInterpolation1D, :DocTestSetup, :(using LagrangeInterpolation1D); recursive = true)
+DocMeta.setdocmeta!(PeriodicInterpolation1D, :DocTestSetup, :(using PeriodicInterpolation1D); recursive = true)
 
 # Add titles of sections and overrides page titles
 const titles = Dict(
@@ -62,12 +62,12 @@ function list_pages()
 end
 
 makedocs(;
-    modules = [LagrangeInterpolation1D],
+    modules = [PeriodicInterpolation1D],
     authors = "Katharina Kormann <k.kormann@rub.de>, Pierre Navaro <navaro@math.cnrs.fr>, Klaus Reuter <khr@mpcdf.mpg.de> ",
-    repo = "https://github.com/juliavlasov/LagrangeInterpolation1D.jl/blob/{commit}{path}#{line}",
-    sitename = "LagrangeInterpolation1D.jl",
-    format = Documenter.HTML(; canonical = "https://juliavlasov.github.io/LagrangeInterpolation1D.jl"),
+    repo = "https://github.com/juliavlasov/PeriodicInterpolation1D.jl/blob/{commit}{path}#{line}",
+    sitename = "PeriodicInterpolation1D.jl",
+    format = Documenter.HTML(; canonical = "https://juliavlasov.github.io/PeriodicInterpolation1D.jl"),
     pages = list_pages(),
 )
 
-deploydocs(; repo = "github.com/juliavlasov/LagrangeInterpolation1D.jl")
+deploydocs(; repo = "github.com/juliavlasov/PeriodicInterpolation1D.jl")

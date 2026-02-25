@@ -13,5 +13,5 @@ Pages = ["95-reference.md"]
 ```
 
 ```@autodocs
-Modules = [LagrangeInterpolation1D]
+Modules = [PeriodicInterpolation1D]
 ```

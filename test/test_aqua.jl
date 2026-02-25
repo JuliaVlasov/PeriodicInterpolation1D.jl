@@ -1,7 +1,7 @@
 
 @testitem "Aqua.jl" begin
   using Aqua
-  using LagrangeInterpolation1D
-  Aqua.test_all(LagrangeInterpolation1D)
+  using PeriodicInterpolation1D
+  Aqua.test_all(PeriodicInterpolation1D)
 end
 

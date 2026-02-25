@@ -1,5 +1,5 @@
 using BenchmarkTools
-using LagrangeInterpolation1D
+using PeriodicInterpolation1D
 
 SUITE = BenchmarkGroup()
 

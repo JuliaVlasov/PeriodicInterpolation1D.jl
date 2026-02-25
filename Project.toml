@@ -1,4 +1,4 @@
-name = "LagrangeInterpolation1D"
+name = "PeriodicInterpolation1D"
 uuid = "d32cb302-a956-591b-8d53-254f0a948d40"
 version = "0.1.0"
 authors = ["Katharina Kormann <k.kormann@rub.de>", " Pierre Navaro <navaro@math.cnrs.fr>", " Klaus Reuter <khr@mpcdf.mpg.de> "]

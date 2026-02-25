@@ -1,10 +1,10 @@
 ```@meta
-CurrentModule = LagrangeInterpolation1D
+CurrentModule = PeriodicInterpolation1D
 ```
 
-# 1D Lagrange Interpolation on Uniform Grids
+# 1D Periodic Lagrange Interpolation on Uniform Grids
 
-Documentation for [LagrangeInterpolation1D](https://github.com/juliavlasov/LagrangeInterpolation1D.jl).
+Documentation for [PeriodicInterpolation1D](https://github.com/juliavlasov/PeriodicInterpolation1D.jl).
 
 Author: Translated from Fortran to Julia by Pierre Navaro with [claude.ai](https://claude.ai/).
 Original Authors: Klaus Reuter (MPCDF), Katharina Kormann (RUB)

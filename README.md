@@ -1,10 +1,10 @@
-# LagrangeInterpolation1D
+# PeriodicInterpolation1D
 
-[![Stable Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://juliavlasov.github.io/LagrangeInterpolation1D.jl/stable)
-[![Development documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliavlasov.github.io/LagrangeInterpolation1D.jl/dev)
-[![Test workflow status](https://github.com/juliavlasov/LagrangeInterpolation1D.jl/actions/workflows/Test.yml/badge.svg?branch=main)](https://github.com/juliavlasov/LagrangeInterpolation1D.jl/actions/workflows/Test.yml?query=branch%3Amain)
-[![Coverage](https://codecov.io/gh/juliavlasov/LagrangeInterpolation1D.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/juliavlasov/LagrangeInterpolation1D.jl)
-[![Docs workflow Status](https://github.com/juliavlasov/LagrangeInterpolation1D.jl/actions/workflows/Docs.yml/badge.svg?branch=main)](https://github.com/juliavlasov/LagrangeInterpolation1D.jl/actions/workflows/Docs.yml?query=branch%3Amain)
+[![Stable Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://juliavlasov.github.io/PeriodicInterpolation1D.jl/stable)
+[![Development documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliavlasov.github.io/PeriodicInterpolation1D.jl/dev)
+[![Test workflow status](https://github.com/juliavlasov/PeriodicInterpolation1D.jl/actions/workflows/Test.yml/badge.svg?branch=main)](https://github.com/juliavlasov/PeriodicInterpolation1D.jl/actions/workflows/Test.yml?query=branch%3Amain)
+[![Coverage](https://codecov.io/gh/juliavlasov/PeriodicInterpolation1D.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/juliavlasov/PeriodicInterpolation1D.jl)
+[![Docs workflow Status](https://github.com/juliavlasov/PeriodicInterpolation1D.jl/actions/workflows/Docs.yml/badge.svg?branch=main)](https://github.com/juliavlasov/PeriodicInterpolation1D.jl/actions/workflows/Docs.yml?query=branch%3Amain)
 [![BestieTemplate](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/JuliaBesties/BestieTemplate.jl/main/docs/src/assets/badge.json)](https://github.com/JuliaBesties/BestieTemplate.jl)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
@@ -36,12 +36,12 @@ Based on formulas from Abramowitz and Stegun: Handbook of Mathematical Functions
 Include the module in your Julia code:
 
 ```julia
-using LagrangeInterpolation1D
+using PeriodicInterpolation1D
 ```
 
 ## Quick Start Examples
 
-### Example: Periodic Boundary Conditions
+### Example: Lagrange Interpolation 
 
 ```julia
 n = 100

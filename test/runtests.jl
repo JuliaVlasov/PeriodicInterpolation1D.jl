@@ -1,5 +1,5 @@
 using Aqua
-using LagrangeInterpolation1D
+using PeriodicInterpolation1D
 using TestItemRunner
 
 @run_package_tests verbose = true
