@@ -10,6 +10,7 @@ using Test
     for order in [2, 4, 6, 8]
         work = SplineInterpolant1D(N, order)
         interpolate!(u_out, work, u, 0.0)
+        @show maximum(abs.(u_out - expected))
         @test maximum(abs.(u_out - u)) < 1e-14
 
         interpolate!(u_out, work, u, alpha)
