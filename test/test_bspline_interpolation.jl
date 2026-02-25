@@ -9,8 +9,11 @@ using Test
 
     for order in [2, 4, 6, 8]
         work = SplineInterpolant1D(N, order)
-        interpolate!(u_out, work, u, alpha)
+        interpolate!(u_out, work, u, 0.0)
         @test maximum(abs.(u_out - u)) < 1e-14
+        
+        interpolate!(u_out, work, u, alpha)
+        @test maximum(abs.(u_out - expected)) < 0.03
     end
 end
 
