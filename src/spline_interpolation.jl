@@ -23,9 +23,9 @@ function uniform_bsplines_eval_basis(p::Int, x::Float64)
     return bspl
 end
 
-export SplineInterpolant1D
+export BSpline
 
-struct SplineInterpolant1D
+struct BSpline
 
     N::Int
     order::Int
@@ -35,7 +35,7 @@ struct SplineInterpolant1D
     ufft::Vector{ComplexF64}
     buf::Vector{Float64}
 
-    function SplineInterpolant1D(N::Int, order::Int)
+    function BSpline(N::Int, order::Int)
 
         p = order - 1
 
@@ -65,7 +65,7 @@ end
 
 function interpolate!(
     u_out::Vector{Float64},
-    work::SplineInterpolant1D,
+    work::BSpline,
     u::Vector{Float64},
     alpha::Float64,
 )
@@ -87,8 +87,8 @@ function interpolate!(
     
    # compute eigenvalues of cubic splines evaluated 
    # at displaced points
-   ishift = floor(Int, -alpha)
-   beta   = -ishift - alpha
+   ishift = floor(Int, alpha)
+   beta   = -ishift + alpha
    biatx = uniform_bsplines_eval_basis(p, beta)
    fill!(eigalpha, 0.0im)
    for i in -div(p-1,2):div(p+1,2)

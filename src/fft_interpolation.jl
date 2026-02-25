@@ -1,13 +1,13 @@
-export FFTInterpolant1D
+export Spectral
 
-struct FFTInterpolant1D
+struct Spectral
 
     N::Int
     eigenvalues_S::Vector{ComplexF64}
     modes::Vector{ComplexF64}
     ufft::Vector{ComplexF64}
 
-    function FFTInterpolant1D(N::Int)
+    function Spectral(N::Int)
 
         ufft = zeros(ComplexF64, N)
         eigenvalues_S = zeros(ComplexF64, N)
@@ -21,7 +21,7 @@ end
 
 function interpolate!(
     u_out::Vector{Float64},
-    work::FFTInterpolant1D,
+    work::Spectral,
     u::Vector{Float64},
     alpha::Float64,
 )
@@ -45,9 +45,9 @@ function interpolate!(
     fft!(work.ufft)
 
     work.eigenvalues_S[1] = 1.0
-    work.eigenvalues_S[N÷2+1] = exp(1im * π * alpha)
+    work.eigenvalues_S[N÷2+1] = exp(-1im * π * alpha)
     for k = 1:(N÷2-1)
-        work.eigenvalues_S[k+1] = exp(1im * 2pi * k * alpha / N)
+        work.eigenvalues_S[k+1] = exp(-1im * 2pi * k * alpha / N)
         work.eigenvalues_S[N-k+1] = exp(-1im * 2pi * k * alpha / N)
     end
 

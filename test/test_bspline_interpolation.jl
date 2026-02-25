@@ -8,12 +8,12 @@ using Test
     expected = Float64[cos(2π * ((i - 1) + alpha) / N) for i = 1:N]
 
     for order in [2, 4, 6, 8]
-        work = SplineInterpolant1D(N, order)
+        work = BSpline(N, order)
         interpolate!(u_out, work, u, 0.0)
-        @show maximum(abs.(u_out - expected))
+        @show maximum(abs.(u_out - u))
         @test maximum(abs.(u_out - u)) < 1e-14
 
-        interpolate!(u_out, work, u, alpha)
+        interpolate!(u_out, work, u, -alpha)
         @show maximum(abs.(u_out - expected))
         @test maximum(abs.(u_out - expected)) < 0.03
     end

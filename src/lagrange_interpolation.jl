@@ -18,9 +18,9 @@ const inv_80640 = 1.0 / 80640.0
 const inv_362880 = 1.0 / 362880.0
 const inv_3628800 = 1.0 / 3628800.0
 
-export LagrangeInterpolant1D
+export Lagrange
 
-struct LagrangeInterpolant1D
+struct Lagrange
 
     stencil::Int
 
@@ -214,7 +214,7 @@ Lagrange interpolation with periodic boundary conditions.
 # Description
 Uses periodic wrapping for boundary points, treating the array as circular.
 """
-function interpolate!(fp, interpolant::LagrangeInterpolant1D, fi, p)
+function interpolate!(fp, interpolant::Lagrange, fi, p)
 
     n = length(fi)
     stencil = interpolant.stencil
