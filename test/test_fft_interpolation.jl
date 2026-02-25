@@ -9,10 +9,10 @@ using Test
 
     work = FFTInterpolant1D(N)
 
-    interpolate!(work, u_out, u, 0.0)
+    interpolate!(u_out, work, u, 0.0)
     @test maximum(abs.(u_out - u)) < 1e-14
 
-    interpolate!(work, u_out, u, alpha)
+    interpolate!(u_out, work, u, alpha)
     @test maximum(abs.(u_out - expected)) < 0.03
 
 end
