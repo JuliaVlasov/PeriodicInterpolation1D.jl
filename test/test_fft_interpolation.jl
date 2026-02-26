@@ -8,15 +8,12 @@ using Test
     u_out = zeros(N)
     expected = Float64[cos(2π * ((i - 1) + alpha) / N) for i = 1:N]
 
-    work = Spectral(N)
+    interpolant = Spectral(N)
 
-    
-    interpolate!(u_out, work, u, 0.0)
+    interpolate!(u_out, interpolant, u, 0.0)
     @test maximum(abs.(u_out - u)) < 1e-14
 
-    println("FFT")
-    interpolate!(u_out, work, u, alpha)
-    @show maximum(abs.(u_out - expected))
-    @test maximum(abs.(u_out - expected)) < 0.03
+    interpolate!(u_out, interpolant, u, alpha)
+    @test maximum(abs.(u_out - expected)) < 1e-14
 
 end
