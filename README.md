@@ -8,7 +8,7 @@
 [![BestieTemplate](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/JuliaBesties/BestieTemplate.jl/main/docs/src/assets/badge.json)](https://github.com/JuliaBesties/BestieTemplate.jl)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
-Julia translation of the Fortran module `sll_m_lagrange_interpolation_1d_fast.F90` from [SeLaLib](https://selalib.github.io).
+Julia translation of Fortran modules from [SeLaLib](https://selalib.github.io). Different kind of numeric interpolation in one dimension are implemented but the boundary conditions are always periodic.
 
 I use this to test some Julia packages for software engineering such as:
 
@@ -20,11 +20,11 @@ I use this to test some Julia packages for software engineering such as:
 
 ## Overview
 
-This module provides fast 1D Lagrange interpolation functions for uniform grids. It supports both odd-order (3, 5, 7, 9, 11 points) and even-order (4, 6, 8 points) interpolation stencils with various boundary condition treatments.
+This module provides Lagrange, B-splines and Spectral interpolation functions for uniform grids. It supports odd-order (3, 5, 7, 9, 11 points) for Lagrange and B-splines.
 
 ## Authors
 
-- Original Fortran: Klaus Reuter (MPCDF), Katharina Kormann (RUB)
+- Original Fortran: Klaus Reuter (MPCDF), Katharina Kormann (RUB), Michel Mehrenberger (I2M)
 - Julia Translation: Pierre Navaro (IRMAR)
 
 ## Reference
@@ -45,9 +45,9 @@ using PeriodicInterpolation1D
 
 ```julia
 n = 100
-fi = sin.(range(0, 2π, length=n))
+fi = sin.(LinRange(0, 2π, n+1)[1:end-1]) # removes the last point
 fp = zeros(n)
-interpolant = LagrangeInterpolant1D(7)
+interpolant = Lagrange(7)
 displacement = 0.5
 interpolate!(fp, interpolant, fi, displacement)
 ```

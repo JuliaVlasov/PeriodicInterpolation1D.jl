@@ -2,18 +2,16 @@ export Spectral
 
 struct Spectral
 
-    N::Int
-    eigenvalues_S::Vector{ComplexF64}
-    modes::Vector{ComplexF64}
+    nx::Int
+    eigvals::Vector{ComplexF64}
     ufft::Vector{ComplexF64}
 
-    function Spectral(N::Int)
+    function Spectral(nx::Int)
 
-        ufft = zeros(ComplexF64, N)
-        eigenvalues_S = zeros(ComplexF64, N)
-        modes = zeros(ComplexF64, N)
+        ufft = zeros(ComplexF64, nx)
+        eigvals = zeros(ComplexF64, nx)
 
-        new(N, eigenvalues_S, modes, ufft)
+        new(nx, eigvals, ufft)
 
     end
 
@@ -21,40 +19,25 @@ end
 
 function interpolate!(
     u_out::Vector{Float64},
-    work::Spectral,
+    interpolant::Spectral,
     u::Vector{Float64},
     alpha::Float64,
 )
 
-    N = work.N
+    nx = interpolant.nx
+    interpolant.ufft .= u
+    fft!(interpolant.ufft)
 
-    ishift = floor(Int, -alpha)
-    beta = -ishift - alpha
-
-    while beta < 0
-        beta += 1.0
-    end
-    while beta > 1
-        beta -= 1.0
-    end
-
-    for i = 1:N
-        work.ufft[i] = complex(u[i])
+    interpolant.eigvals[1] = 1.0
+    interpolant.eigvals[nx÷2+1] = exp(1im * π * alpha)
+    for k = 1:(nx÷2-1)
+        interpolant.eigvals[k+1] = exp(1im * 2pi * k * alpha / nx)
+        interpolant.eigvals[nx-k+1] = exp(-1im * 2pi * k * alpha / nx)
     end
 
-    fft!(work.ufft)
+    interpolant.ufft .*= interpolant.eigvals
+    ifft!(interpolant.ufft)
 
-    work.eigenvalues_S[1] = 1.0
-    work.eigenvalues_S[N÷2+1] = exp(-1im * π * alpha)
-    for k = 1:(N÷2-1)
-        work.eigenvalues_S[k+1] = exp(-1im * 2pi * k * alpha / N)
-        work.eigenvalues_S[N-k+1] = exp(-1im * 2pi * k * alpha / N)
-    end
+    u_out .= real(interpolant.ufft)
 
-    work.ufft .*= work.eigenvalues_S
-    ifft!(work.ufft)
-
-    for i = 1:N
-        u_out[i] = real(work.ufft[i])
-    end
 end

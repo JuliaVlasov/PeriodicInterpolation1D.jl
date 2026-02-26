@@ -114,7 +114,6 @@ end
 
 end
 
-# Run tests
 @testitem "periodic order 3" tags = [:Lagrange] setup = [CommonHelpers, SharedData] begin
     @test CommonHelpers.test_interpolation(f, num_points, fi, alpha, xp, 3, 8.0e-6)
     @test CommonHelpers.test_interpolation(g, num_points, gi, alpha, xp, 3, 1.0e-2)
