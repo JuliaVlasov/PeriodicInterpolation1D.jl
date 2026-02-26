@@ -7,16 +7,15 @@ using Test
     u_out = zeros(nx)
     expected = Float64[cos(2π * ((i - 1) + alpha) / nx) for i = 1:nx]
 
-    println("Spline")
     for order in [2, 4, 6, 8]
 
-        work = BSpline(nx, order)
-        interpolate!(u_out, work, u, 0.0)
+        interpolant = BSpline(nx, order)
+        interpolate!(u_out, interpolant, u, 0.0)
         @test maximum(abs.(u_out - u)) < 1e-14
 
-        interpolate!(u_out, work, u, alpha)
-        @show maximum(abs.(u_out - expected))
-        @test maximum(abs.(u_out - expected)) < 0.03
+        interpolate!(u_out, interpolant, u, alpha)
+        tol = max(10.0 / 10^(2order), 1e-14)
+        @test maximum(abs.(u_out - expected)) < tol
 
     end
 end
