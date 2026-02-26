@@ -27,80 +27,75 @@ export BSpline
 
 struct BSpline
 
-    N::Int
+    nx::Int
     order::Int
-    eigenvalues_Minv::Vector{Float64}
-    eigenvalues_S::Vector{ComplexF64}
-    modes::Vector{Float64}
+    eigvals_M::Vector{Float64}
+    eigvals_S::Vector{ComplexF64}
+    eikx::Vector{ComplexF64}
     ufft::Vector{ComplexF64}
-    buf::Vector{Float64}
 
-    function BSpline(N::Int, order::Int)
+    function BSpline(nx::Int, order::Int)
 
         p = order - 1
 
         isodd(order) && error("Spline interpolation order needs to be even. Order here is: $order")
 
-        ufft = zeros(ComplexF64, N)
-        eigenvalues_Minv = zeros(Float64, N)
-        eigenvalues_S = zeros(ComplexF64, N)
-        modes = zeros(ComplexF64, N)
+        ufft = zeros(ComplexF64, nx)
+        eigvals_M = zeros(Float64, nx)
+        eigvals_S = zeros(ComplexF64, nx)
+        eikx = exp.([2π * i * 1im / nx for i in 0:nx-1])
 
-        buf = Float64[]
+        # compute eigenvalues of degree p b-spline matrix
         biatx = uniform_bsplines_eval_basis(p, 0.0)
-
-        for i = 1:N
-            modes[i] = exp(2π * (i-1) / N)
-            eigenvalues_Minv[i] = biatx[(p+1)÷2]
-            for j = 1:((p+1)÷2)
-                eigenvalues_Minv[i] += biatx[j+(p+1)÷2] * 2 * cos(j * 2pi * (i - 1) / N)
+        eigvals_M .= biatx[div(p+1,2)]
+        for i in 1:div(p+1,2)-1
+            for j in 1:nx
+                eigvals_M[j] += biatx[i + div(p + 1,2)] * 2 * cos( 2π * i * (j-1) / nx )
             end
-            eigenvalues_Minv[i] = 1.0 / eigenvalues_Minv[i]
         end
 
-        new(N, order, eigenvalues_Minv, eigenvalues_S, modes, ufft, buf)
+        for i = 1:nx
+            eigvals_M[i] = 1.0 / eigvals_M[i]
+        end
+
+        new(nx, order, eigvals_M, eigvals_S, eikx, ufft)
 
     end
+
 end
+
+modulo(a,p) = a - floor(Int, a / p) * p
 
 function interpolate!(
     u_out::Vector{Float64},
-    work::BSpline,
+    interpolant::BSpline,
     u::Vector{Float64},
     alpha::Float64,
 )
 
-   p = work.order - 1
-   nx = work.N
-   modes = [2π * i / nx for i in 0:nx-1]
+   p = interpolant.order - 1
+   nx = interpolant.nx
+
+   interpolant.ufft .= u
+   fft!(interpolant.ufft)
     
-   # compute eigenvalues of degree p b-spline matrix
-   biatx = uniform_bsplines_eval_basis(p, 0.0)
-   eig_bspl  = zeros(Float64, nx)
-   eig_bspl .= biatx[div(p+1,2)]
-   for i in 1:div(p+1,2)-1
-       eig_bspl .+= biatx[i + div(p + 1,2)] .* 2 .* cos.( i .* modes)
-   end
-   eigalpha = zeros(Complex{Float64}, nx)
-    
-   ut = fft(u)
-    
-   # compute eigenvalues of cubic splines evaluated 
-   # at displaced points
+   # compute eigenvalues of cubic splines evaluated at displaced points
    ishift = floor(Int, alpha)
    beta   = -ishift + alpha
    biatx = uniform_bsplines_eval_basis(p, beta)
-   fill!(eigalpha, 0.0im)
+   fill!(interpolant.eigvals_S, 0.0im)
    for i in -div(p-1,2):div(p+1,2)
-       eigalpha .+= (biatx[i+div(p+1,2)] .* exp.((ishift+i) * 1im .* modes))
+       for j in 1:nx
+           imode = modulo((ishift+i) * (j-1), nx) + 1
+           interpolant.eigvals_S[j] += (biatx[i+div(p+1,2)] * interpolant.eikx[imode])
+       end
    end
           
-   # compute interpolating spline using fft and properties 
-   # of circulant matrices
+   # compute interpolating spline using fft and properties of circulant matrices
     
-   ut .*= eigalpha ./ eig_bspl
+   interpolant.ufft .*= interpolant.eigvals_S .* interpolant.eigvals_M
         
-   u_out .= real(ifft(ut))
+   u_out .= real(ifft(interpolant.ufft))
     
 
 end
