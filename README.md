@@ -1,13 +1,14 @@
-# LagrangeInterpolation1D
+# PeriodicInterpolation1D
 
-[![Stable Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://juliavlasov.github.io/LagrangeInterpolation1D.jl/stable)
-[![Development documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliavlasov.github.io/LagrangeInterpolation1D.jl/dev)
-[![Test workflow status](https://github.com/juliavlasov/LagrangeInterpolation1D.jl/actions/workflows/Test.yml/badge.svg?branch=main)](https://github.com/juliavlasov/LagrangeInterpolation1D.jl/actions/workflows/Test.yml?query=branch%3Amain)
-[![Coverage](https://codecov.io/gh/juliavlasov/LagrangeInterpolation1D.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/juliavlasov/LagrangeInterpolation1D.jl)
-[![Docs workflow Status](https://github.com/juliavlasov/LagrangeInterpolation1D.jl/actions/workflows/Docs.yml/badge.svg?branch=main)](https://github.com/juliavlasov/LagrangeInterpolation1D.jl/actions/workflows/Docs.yml?query=branch%3Amain)
+[![Stable Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://juliavlasov.github.io/PeriodicInterpolation1D.jl/stable)
+[![Development documentation](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliavlasov.github.io/PeriodicInterpolation1D.jl/dev)
+[![Test workflow status](https://github.com/juliavlasov/PeriodicInterpolation1D.jl/actions/workflows/Test.yml/badge.svg?branch=main)](https://github.com/juliavlasov/PeriodicInterpolation1D.jl/actions/workflows/Test.yml?query=branch%3Amain)
+[![Coverage](https://codecov.io/gh/juliavlasov/PeriodicInterpolation1D.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/juliavlasov/PeriodicInterpolation1D.jl)
+[![Docs workflow Status](https://github.com/juliavlasov/PeriodicInterpolation1D.jl/actions/workflows/Docs.yml/badge.svg?branch=main)](https://github.com/juliavlasov/PeriodicInterpolation1D.jl/actions/workflows/Docs.yml?query=branch%3Amain)
 [![BestieTemplate](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/JuliaBesties/BestieTemplate.jl/main/docs/src/assets/badge.json)](https://github.com/JuliaBesties/BestieTemplate.jl)
+[![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
-Julia translation of the Fortran module `sll_m_lagrange_interpolation_1d_fast.F90` from [SeLaLib](https://selalib.github.io).
+Julia translation of Fortran modules from [SeLaLib](https://selalib.github.io). Different kind of numeric interpolation in one dimension are implemented but the boundary conditions are always periodic.
 
 I use this to test some Julia packages for software engineering such as:
 
@@ -19,57 +20,35 @@ I use this to test some Julia packages for software engineering such as:
 
 ## Overview
 
-This module provides fast 1D Lagrange interpolation functions for uniform grids. It supports both odd-order (3, 5, 7, 9, 11 points) and even-order (4, 6, 8 points) interpolation stencils with various boundary condition treatments.
+This module provides **four different interpolation methods** for periodic 1D uniform grids:
 
-## Authors
+| Method | Type | Accuracy | Speed | Use Case |
+|--------|------|----------|-------|----------|
+| **[Lagrange]** | Global FFT-based | Spectral | Medium | High accuracy, smooth functions |
+| **[BSpline]** | Smooth basis | Polynomial | Medium | Smooth interpolation, flexibility |
+| **[Spectral]** | Fourier-based | Exponential | Medium | Maximum accuracy for smooth data |
+| **[FastLagrange]** | Local stencil | Polynomial | Fast | Performance-critical, small shifts |
 
-- Original Fortran: Klaus Reuter (MPCDF), Katharina Kormann (RUB)
-- Julia Translation: Pierre Navaro (IRMAR)
+All methods assume periodic boundary conditions. See the [full documentation](https://juliavlasov.github.io/PeriodicInterpolation1D.jl/) for detailed information.
 
-## Reference
-
-Based on formulas from Abramowitz and Stegun: Handbook of Mathematical Functions, Chapter 25.2
-
-## Installation
-
-Include the module in your Julia code:
+## ⚡ Quick Start
 
 ```julia
-using LagrangeInterpolation1D
-include("test/test/test_lagrange_interpolation_1d.jl")
-```
+using PeriodicInterpolation1D
 
-## Quick Start Examples
-
-### Example 1: Simple Interpolation (No Boundary Conditions)
-
-```julia
+# Create sample data on a 100-point periodic grid
 n = 100
-fi = randn(n)
-fp = zeros(n)
+x = 2π .* (0:n-1) ./ n
+f = sin.(x)
+f_interp = zeros(n)
 
-lagrange_interpolation_1d_fast_disp_fixed_no_bc(fi, fp, 0.3, 5)
-```
+# Interpolate using Lagrange polynomials with 0.5 grid-point shift
+lagr = Lagrange(n, 5)  # 5-point stencil
+interpolate!(f_interp, lagr, f, 0.5)
 
-### Example 2: Periodic Boundary Conditions
-
-```julia
-n = 100
-fi = sin.(range(0, 2π, length=n))
-fp = zeros(n)
-
-lagrange_interpolation_1d_fast_disp_fixed_periodic(fi, fp, 0.5, 7)
-```
-
-## Running Tests
-
-```bash
-julia test_lagrange_interpolation_1d_fast.jl
-```
-
-Expected output: `PASSED.`
-
-See full documentation in the module docstrings using Julia's help system:
-```julia
-?lagrange_interpolation_1d_fast_disp_fixed_no_bc
+# Or use other methods:
+# bspl = BSpline(n, 4)
+# spec = Spectral(n)
+# fast = FastLagrange(7)
+# interpolate!(f_interp, bspl, f, 0.5)
 ```

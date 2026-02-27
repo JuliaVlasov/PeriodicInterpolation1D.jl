@@ -29,7 +29,7 @@ JuliaMinVersion: '1.10'
 License: MIT
 LicenseCopyrightHolders: Katharina Kormann, Pierre Navaro, Klaus Reuter
 MarkdownIndentation: 2
-PackageName: LagrangeInterpolation1D
+PackageName: PeriodicInterpolation1D
 PackageOwner: juliavlasov
 PackageUUID: d32cb302-a956-591b-8d53-254f0a948d40
 RunJuliaNightlyOnCI: false

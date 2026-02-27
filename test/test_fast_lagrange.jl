@@ -20,12 +20,12 @@ If all tests pass, the program prints "PASSED."
 If any test fails, the program prints "FAILED."
 """
 
-using LagrangeInterpolation1D
+using PeriodicInterpolation1D
 
 @testmodule CommonHelpers begin
 
 
-    using LagrangeInterpolation1D
+    using PeriodicInterpolation1D
 
 
     """
@@ -54,11 +54,14 @@ using LagrangeInterpolation1D
     and checks if error is within tolerance.
     """
     function test_interpolation(
-            f::Function,
-            num_points::Int, fi::Vector{Float64}, alpha::Float64,
-            xp::Vector{Float64}, order::Int,
-            tolerance::Float64
-        )
+        f::Function,
+        num_points::Int,
+        fi::Vector{Float64},
+        alpha::Float64,
+        xp::Vector{Float64},
+        order::Int,
+        tolerance::Float64,
+    )
 
 
         fp = zeros(Float64, num_points)
@@ -67,9 +70,10 @@ using LagrangeInterpolation1D
         pmessage = string(order)
 
         println("Test fixed_periodic with order ", pmessage, " .")
-        lagrange_interpolation_1d_fast_disp_fixed_periodic(fi, fp, alpha, order)
+        interpolant = FastLagrange(order)
+        interpolate!(fp, interpolant, fi, alpha)
 
-        for i in 1:num_points
+        for i = 1:num_points
             diff = max(diff, abs(f(xp[i], num_points) - fp[i]))
         end
 
@@ -101,7 +105,7 @@ end
     xmax = Float64(num_points - 1)
     l = xmax - xmin
 
-    for i in 1:(num_points)
+    for i = 1:(num_points)
         xi[i] = Float64(i - 1)
         fi[i] = f(xi[i], num_points)
         gi[i] = g(xi[i], num_points)
@@ -110,28 +114,27 @@ end
 
 end
 
-# Run tests
 @testitem "periodic order 3" tags = [:Lagrange] setup = [CommonHelpers, SharedData] begin
     @test CommonHelpers.test_interpolation(f, num_points, fi, alpha, xp, 3, 8.0e-6)
     @test CommonHelpers.test_interpolation(g, num_points, gi, alpha, xp, 3, 1.0e-2)
 end
 
-@testitem "periodic order 5" tags = [:Lagrange] setup = [CommonHelpers, SharedData]  begin
+@testitem "periodic order 5" tags = [:Lagrange] setup = [CommonHelpers, SharedData] begin
     @test CommonHelpers.test_interpolation(f, num_points, fi, alpha, xp, 5, 1.0e-8)
     @test CommonHelpers.test_interpolation(g, num_points, gi, alpha, xp, 5, 1.0e-8)
 end
 
-@testitem "periodic order 7" tags = [:Lagrange] setup = [CommonHelpers, SharedData]  begin
+@testitem "periodic order 7" tags = [:Lagrange] setup = [CommonHelpers, SharedData] begin
     @test CommonHelpers.test_interpolation(f, num_points, fi, alpha, xp, 7, 1.0e-8)
     @test CommonHelpers.test_interpolation(g, num_points, gi, alpha, xp, 7, 1.0e-8)
 end
 
-@testitem "periodic order 9" tags = [:Lagrange] setup = [CommonHelpers, SharedData]  begin
+@testitem "periodic order 9" tags = [:Lagrange] setup = [CommonHelpers, SharedData] begin
     @test CommonHelpers.test_interpolation(f, num_points, fi, alpha, xp, 9, 1.0e-14)
     @test CommonHelpers.test_interpolation(g, num_points, gi, alpha, xp, 9, 1.0e-14)
 end
 
-@testitem "periodic order 11" tags = [:Lagrange] setup = [CommonHelpers, SharedData]  begin
+@testitem "periodic order 11" tags = [:Lagrange] setup = [CommonHelpers, SharedData] begin
     @test CommonHelpers.test_interpolation(f, num_points, fi, alpha, xp, 11, 1.0e-14)
     @test CommonHelpers.test_interpolation(g, num_points, gi, alpha, xp, 11, 1.0e-14)
 end

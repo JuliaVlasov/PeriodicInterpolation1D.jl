@@ -1,16 +1,12 @@
 # Vlasov-Poisson 1D1V example
 
-```julia
+```@example vp1d1v
 using Plots
 using FFTW
-using LagrangeInterpolation1D
+using PeriodicInterpolation1D
 using LinearAlgebra
-using Statistics
-using .Threads
+import Statistics: mean
 
-"""
-1D uniform mesh data
-"""
 struct UniformMesh
     xmin::Float64
     xmax::Float64
@@ -24,7 +20,6 @@ struct UniformMesh
     end
 end
 
-# %%
 function advection!(
         f::Array{Float64, 2},
         p::Int64, mesh::UniformMesh, v::Vector{Float64},
@@ -38,7 +33,8 @@ function advection!(
     for j in 1:nv
         fi = view(f, :, j)
         alpha = - dt * v[j] / dx
-        lagrange_interpolation_1d_fast_disp_fixed_periodic(fi, fp, alpha, p)
+        interpolant = FastLagrange(p)
+        interpolate!(fp, interpolant, fi, alpha)
         f[:, j] .= fp
     end
 
@@ -47,7 +43,7 @@ end
 ```
 
 
-```julia
+```@example vp1d1v
 function compute_rho(
         meshv::UniformMesh,
         f::Array{Float64, 2}
@@ -61,9 +57,9 @@ end
 " compute Ex using that -ik*Ex = rho "
 function compute_e(meshx::UniformMesh, rho::Vector{Float64})
     nx = meshx.nx
-    k = 2 * pi / (meshx.xmax - meshx.xmin)
+    k = 2pi / (meshx.xmax - meshx.xmin)
     modes = zeros(Float64, nx)
-    modes .= k * vcat(0:(div(nx, 2) - 1), -div(nx, 2):-1)
+    modes .= k * fftfreq(nx, nx)
     modes[1] = 1.0
     rhok = fft(rho) ./ modes
     rhok .*= -1im
@@ -72,14 +68,11 @@ function compute_e(meshx::UniformMesh, rho::Vector{Float64})
 end
 ```
 
+# Landau Damping
 
-```julia
-# %% [markdown]
-# # Landau Damping
-#
-# [Landau damping - Wikipedia](https://en.wikipedia.org/wiki/Landau_damping)
+[Landau damping - Wikipedia](https://en.wikipedia.org/wiki/Landau_damping)
 
-# %%
+```@example vp1d1v
 function landau(dt, nt::Int64)
 
     # Set grid
@@ -93,14 +86,11 @@ function landau(dt, nt::Int64)
     v = meshv.x
     dx = meshx.dx
 
-    # Create Vlasov-Poisson simulation
-
     eps, kx = 0.001, 0.5
     f = zeros(Float64, (nx, nv))
-    f .= (1.0 .+ eps * cos.(kx * x)) / sqrt(2π) * transpose(exp.(-0.5 * v .^ 2))
+    f .= (1.0 .+ eps * cos.(kx * x)) / sqrt(2π) .* transpose(exp.(-0.5 * v .^ 2))
     fᵗ = zeros(Float64, (nv, nx))
 
-    # Run simulation
     rho = compute_rho(meshv, f)
     e = compute_e(meshx, rho)
     ℰ = Float64[0.5 * log(sum(e .* e) * dx)]
@@ -123,14 +113,10 @@ end
 
 ```
 
-```julia
-# %%
+```@example vp1d1v
 nt = 5000
 dt = 0.01
 @time t, nrj = landau(dt, nt)
-```
-
-```julia
 plot(t, nrj; label = "E")
 plot!(t, -0.1533 * t .- 5.5; label = "-0.1533t.-5.5")
 ```

@@ -45,9 +45,9 @@ jobs:
         run: |
           julia --project=docs -e '
             using Documenter: DocMeta, doctest
-            using LagrangeInterpolation1D
-            DocMeta.setdocmeta!(LagrangeInterpolation1D, :DocTestSetup, :(using LagrangeInterpolation1D); recursive=true)
-            doctest(LagrangeInterpolation1D)'
+            using PeriodicInterpolation1D
+            DocMeta.setdocmeta!(PeriodicInterpolation1D, :DocTestSetup, :(using PeriodicInterpolation1D); recursive=true)
+            doctest(PeriodicInterpolation1D)'
       - name: Generate and deploy documentation
         run: julia --project=docs docs/make.jl
         env:
