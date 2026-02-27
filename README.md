@@ -12,11 +12,11 @@ Julia translation of Fortran modules from [SeLaLib](https://selalib.github.io). 
 
 I use this to test some Julia packages for software engineering such as:
 
-   - [BestieTemplate.jl](https://github.com/JuliaBesties/BestieTemplate.jl)
-   - [BenchmarkTools.jl](https://github.com/JuliaCI/BenchmarkTools.jl)
-   - [BenchmarkCI.jl](https://github.com/tkf/BenchmarkCI.jl)
-   - [PkgBenchmark.jl](https://github.com/JuliaCI/PkgBenchmark.jl)
-   - [TestItemRunner](https://github.com/julia-vscode/TestItemRunner.jl)
+- [BestieTemplate.jl](https://github.com/JuliaBesties/BestieTemplate.jl)
+- [BenchmarkTools.jl](https://github.com/JuliaCI/BenchmarkTools.jl)
+- [BenchmarkCI.jl](https://github.com/tkf/BenchmarkCI.jl) ⚠️ **Note**: This package is broken and no longer maintained
+- [PkgBenchmark.jl](https://github.com/JuliaCI/PkgBenchmark.jl)
+- [TestItemRunner](https://github.com/julia-vscode/TestItemRunner.jl)
 
 ## Overview
 
