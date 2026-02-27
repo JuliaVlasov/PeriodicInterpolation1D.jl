@@ -182,19 +182,23 @@ function landau(nx, nv, dt, nt::Int64, interpolant_x, interpolant_v)
 
 end
 
+@info "Fast Lagrange"
 p = 7
 nx, nv = 64, 128
 dt, nt = 0.01, 10000
 @time t, nrj = landau(nx, nv, dt, nt, FastLagrange(p), FastLagrange(p))
 plot(t, -0.1533 * t .- 5.5; label = "-0.1533t.-5.5")
 plot!(t, nrj; label = "Fast Lagrange")
+@info "Lagrange"
 dt, nt = 0.1, 1000
 @time t, nrj = landau(nx, nv, dt, nt, Lagrange(nx, p), Lagrange(nv, p))
 plot(t, -0.1533 * t .- 5.5; label = "-0.1533t.-5.5")
 plot!(t, nrj; label = "Lagrange")
+@info "Spectral"
 dt, nt = 0.1, 1000
 @time t, nrj = landau(nx, nv, dt, nt, Spectral(nx), Spectral(nv))
 plot!(t, nrj; label = "Spectral")
+@info "B-splines"
 dt, nt = 0.1, 1000
 @time t, nrj = landau(nx, nv, dt, nt, BSpline(nx, 6), BSpline(nv, 6))
 plot!(t, nrj; label = "B-splines")

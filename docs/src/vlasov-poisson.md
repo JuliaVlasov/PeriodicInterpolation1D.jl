@@ -33,7 +33,7 @@ function advection!(
     for j in 1:nv
         fi = view(f, :, j)
         alpha = - dt * v[j] / dx
-        interpolant = Lagrange(p)
+        interpolant = FastLagrange(p)
         interpolate!(fp, interpolant, fi, alpha)
         f[:, j] .= fp
     end

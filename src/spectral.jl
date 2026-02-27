@@ -68,7 +68,7 @@ f_interp = zeros(100)
 interpolate!(f_interp, spec, f, 0.25)  # shift by 0.25 grid points
 ```
 """
-function interpolate!( u_out, interpolant::Spectral, u, alpha::Float64)
+function interpolate!(u_out, interpolant::Spectral, u, alpha::Float64)
 
     nx = interpolant.nx
     interpolant.ufft .= u
@@ -82,8 +82,7 @@ function interpolate!( u_out, interpolant::Spectral, u, alpha::Float64)
     end
 
     interpolant.ufft .*= interpolant.eigvals
-    ifft!(interpolant.ufft)
 
-    u_out .= real(interpolant.ufft)
+    u_out .= real(ifft(interpolant.ufft))
 
 end

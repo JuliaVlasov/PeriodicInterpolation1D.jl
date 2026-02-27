@@ -58,17 +58,20 @@ interpolate!(f_interp, bspl, f, 0.3)
 ```
 
 **Supported Orders:**
+
 - 2: linear B-splines (C⁰ continuity)
 - 4: cubic B-splines (C² continuity)  
 - 6: quintic B-splines (C⁴ continuity)
 - 8: septic B-splines (C⁶ continuity)
 
 **Advantages:**
+
 - Smooth interpolation with controlled continuity
 - Good balance between accuracy and speed
 - Efficient FFT implementation
 
 **Disadvantages:**
+
 - Orders must be even
 - Requires even order → 2nd order and higher
 

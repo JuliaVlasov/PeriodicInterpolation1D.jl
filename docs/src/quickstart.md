@@ -231,7 +231,7 @@ bspl = BSpline(100, 4)  # order 4 is even
 ## Next Steps
 
 - See [Interpolation Methods](@ref) for detailed method descriptions
-- Check the [Reference](@ref) for API documentation
+- Check the [Reference](@ref reference) for API documentation
 - Look at examples in the `examples/` directory
 - Read the original Fortran documentation from [SeLaLib](https://selalib.github.io)
 

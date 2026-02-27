@@ -70,7 +70,7 @@ using PeriodicInterpolation1D
         pmessage = string(order)
 
         println("Test fixed_periodic with order ", pmessage, " .")
-        interpolant = Lagrange(order)
+        interpolant = FastLagrange(order)
         interpolate!(fp, interpolant, fi, alpha)
 
         for i = 1:num_points

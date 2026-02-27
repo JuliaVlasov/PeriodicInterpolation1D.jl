@@ -6,16 +6,15 @@ function uniform_bsplines_eval_basis(p::Int, x::Float64)
     bspl = zeros(Float64, p + 1)
     bspl[1] = 1.0
 
-    for j = 1:p
+    @inbounds for j = 1:p
         xx = -x
-        j_real = Float64(j)
-        inv_j = 1.0 / j_real
+        inv_j = 1.0 / j
         saved = 0.0
         for r = 1:j
             xx += 1.0
             temp = bspl[r] * inv_j
             bspl[r] = saved + xx * temp
-            saved = (j_real - xx) * temp
+            saved = (j - xx) * temp
         end
         bspl[j+1] = saved
     end
@@ -79,14 +78,17 @@ struct BSpline
 
         # compute eigenvalues of degree p b-spline matrix
         biatx = uniform_bsplines_eval_basis(p, 0.0)
-        eigvals_M .= biatx[div(p+1,2)]
-        for i in 1:div(p+1,2)-1
+        mid = div(p + 1, 2)
+        eigvals_M .= biatx[mid]
+        
+        @inbounds for i in 1:(mid-1)
+            coeff = biatx[i + mid] * 2
             for j in 1:nx
-                eigvals_M[j] += biatx[i + div(p + 1,2)] * 2 * cos( 2π * i * (j-1) / nx )
+                eigvals_M[j] += coeff * cos(2π * i * (j - 1) / nx)
             end
         end
 
-        for i = 1:nx
+        @inbounds for i in eachindex(eigvals_M)
             eigvals_M[i] = 1.0 / eigvals_M[i]
         end
 
@@ -96,7 +98,7 @@ struct BSpline
 
 end
 
-modulo(a,p) = a - floor(Int, a / p) * p
+@inline modulo(a, p) = a - floor(Int, a / p) * p
 
 """
     interpolate!(u_out, bspl::BSpline, u, alpha)
@@ -138,16 +140,23 @@ function interpolate!( u_out, interpolant::BSpline, u, alpha::Float64 )
    beta   = -ishift + alpha
    biatx = uniform_bsplines_eval_basis(p, beta)
    fill!(interpolant.eigvals_S, 0.0im)
-   for i in -div(p-1,2):div(p+1,2)
+   
+   mid = div(p + 1, 2)
+   half_p = div(p - 1, 2)
+   eikx = interpolant.eikx
+   eigvals_S = interpolant.eigvals_S
+   
+   @inbounds for i in -half_p:mid
+       coeff = biatx[i + mid]
+       idx_offset = ishift + i
        for j in 1:nx
-           imode = modulo((ishift+i) * (j-1), nx) + 1
-           interpolant.eigvals_S[j] += (biatx[i+div(p+1,2)] * interpolant.eikx[imode])
+           imode = modulo(idx_offset * (j - 1), nx) + 1
+           eigvals_S[j] += coeff * eikx[imode]
        end
    end
           
    # compute interpolating spline using fft and properties of circulant matrices
-    
-   interpolant.ufft .*= interpolant.eigvals_S .* interpolant.eigvals_M
+   @inbounds interpolant.ufft .*= interpolant.eigvals_S .* interpolant.eigvals_M
         
    u_out .= real(ifft(interpolant.ufft))
     
