@@ -30,6 +30,7 @@ This module provides **four different interpolation methods** for periodic 1D un
 | **[BSpline]** | Smooth basis | Polynomial | Medium | Smooth interpolation, flexibility |
 | **[Spectral]** | Fourier-based | Exponential | Medium | Maximum accuracy for smooth data |
 | **[FastLagrange]** | Local stencil | Polynomial | Fast | Performance-critical, small shifts |
+| **[CubicSpline]** | Cubic spline | Cubic | Fast | Smooth cubic-spline interpolation (fast with FastInterpolations.jl) |
 
 All methods assume periodic boundary conditions. See the [full documentation](https://juliavlasov.github.io/PeriodicInterpolation1D.jl/) for detailed information.
 
