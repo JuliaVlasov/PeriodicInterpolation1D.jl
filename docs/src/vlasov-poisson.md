@@ -1,4 +1,86 @@
-# Vlasov-Poisson 1D1V example
+# Vlasov-Poisson 1D1V Simulation Example
+
+This example demonstrates the simulation of the **Vlasov-Poisson system** in 1D phase space
+(1 spatial dimension + 1 velocity dimension) and compares the performance and accuracy of
+different interpolation methods provided by PeriodicInterpolation1D.
+
+## Problem Description
+
+The Vlasov-Poisson system models the evolution of a collisionless plasma:
+
+    ∂f/∂t + v·∇ₓf + E·∇ᵥf = 0    (Vlasov equation)
+    ∇²ϕ = ρ = ∫f dv                 (Poisson equation)
+    E = -∇ₓϕ                        (Electric field)
+
+where:
+- `f(x,v,t)`: distribution function in phase space
+- `x`: spatial coordinate
+- `v`: velocity coordinate  
+- `E`: electric field
+- `ρ`: charge density
+
+## Numerical Method
+
+**Operator Splitting**: The time evolution is split into alternating advection steps:
+
+1. **X-advection**: Move particles in position space with velocity `v`
+   `∂f/∂t + v·∇ₓf = 0`
+
+2. **V-advection**: Move particles in velocity space with acceleration from electric field
+   `∂f/∂t + E·∇ᵥf = 0`
+
+The solution is computed by alternating these advections (Strang splitting):
+- Advect in x by half time-step
+- Advect in v by full time-step (updating E based on current charge density)
+- Advect in x by half time-step
+
+## Interpolation Role
+
+Each advection step is implemented via **semi-Lagrangian interpolation**:
+- Trace characteristics backward along velocity vectors
+- Interpolate distribution function at characteristic endpoints
+- This approach avoids numerical dissipation from upwinding schemes
+
+## Test Case: Landau Damping
+
+This example implements **Landau damping**, a classic weakly nonlinear plasma phenomenon:
+
+    f₀(x,v) = [1 + ε·cos(kₓ·x)] / √(2π) · exp(-v²/2)
+
+where:
+- `ε = 0.001`: Small perturbation amplitude
+- `kₓ = 0.5`: Wavenumber
+
+**Expected behavior**: The electric field energy decays exponentially as
+    E(t) ∝ exp(-γ_L · t)
+where `γ_L ≈ 0.1533` is the Landau damping rate.
+
+## Comparison of Methods
+
+The script compares four interpolation methods:
+
+1. **FastLagrange**: Locally computed 7-point Lagrange polynomials
+2. **Lagrange**: Global FFT-based Lagrange (7-point stencil)
+3. **Spectral**: Pure Fourier interpolation
+4. **BSpline**: B-spline interpolation (order 6)
+
+Each method shows:
+- Execution time for the simulation
+- Energy evolution over time
+- Accuracy compared to theoretical decay rate (linear fit: `-0.1533*t - 5.5`)
+
+## References
+
+- Vlasov-Poisson system: Krall & Trivelpiece (1973)
+- Landau damping: Landau (1946)
+- Semi-Lagrangian schemes: Cheng & Knorr (1976), Sonnendrucker et al. (1999)
+- SeLaLib (Fortran library): https://selalib.github.io/
+
+## Expected Output
+
+- Performance comparison of different interpolation methods
+- Energy decay plots comparing theoretical and numerical solutions
+- Demonstration of semi-Lagrangian advection with periodic boundary conditions
 
 ```@example vp1d1v
 using Plots

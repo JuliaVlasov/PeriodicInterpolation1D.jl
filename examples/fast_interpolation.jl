@@ -1,64 +1,30 @@
 using FastInterpolations
+using LinearAlgebra
 using Plots
-using FFTW
 using DispersionRelations
-import Statistics: mean
 using .Threads
 
-struct UniformMesh
-    xmin::Float64
-    xmax::Float64
-    nx::Int
-    dx::Float64
-    x::Vector{Float64}
-    function UniformMesh(xmin, xmax, nx)
-        dx = (xmax - xmin) / nx
-        x = LinRange(xmin, xmax, nx + 1)[1:end-1]
-        return new(xmin, xmax, nx, dx, x)
-    end
-end
+include("uniform_mesh.jl")
+include("compute_rho.jl")
+include("compute_e.jl")
 
 function advection!(
-        f::Array{Float64, 2},
+        f::Matrix{Float64},
         mesh::UniformMesh, v::Vector{Float64},
         nv::Int64, dt::Float64
     )
 
     nx, dx = mesh.nx, mesh.dx
     xi = 1:nx
-    period = mesh.xmax - mesh.xmin
 
-    for j in 1:nv
-        xp = zero(mesh.x)
-        fp = zeros(nx)
-        fi = view(f, :, j)
+    @threads for j in eachindex(v)
         alpha = - dt * v[j] / dx
+        fi = view(f, :, j)
         xp = xi .+ alpha
-        cubic_interp!(fp, xi, fi, xp, bc=PeriodicBC(endpoint=:exclusive))  
-        f[:, j] .= fp
+        f[:, j] .= cubic_interp(xi, fi, xp, bc=PeriodicBC(endpoint=:exclusive))  
     end
 
     return
-end
-
-function compute_rho(
-        meshv::UniformMesh,
-        f::Array{Float64, 2}
-    )
-
-    dv = meshv.dx
-    rho = dv * sum(f, dims = 2)
-    return vec(rho .- mean(rho))
-end
-
-function compute_e(meshx::UniformMesh, rho::Vector{Float64})
-    nx = meshx.nx
-    k = 2pi / (meshx.xmax - meshx.xmin)
-    modes = zeros(Float64, nx)
-    modes .= k * fftfreq(nx, nx)
-    modes[1] = 1.0
-    rhok = -1im .* fft(rho) ./ modes
-    return real(ifft(rhok))
 end
 
 function landau_fast(nx, nv, dt, nt::Int64)
@@ -99,9 +65,10 @@ function landau_fast(nx, nv, dt, nt::Int64)
 
 end
 
-nx, nv = 128, 128
+nx, nv = 128, 256
 dt, nt = 0.1, 1000
 t, nrj = landau_fast(nx, nv, dt, 1)
+landau_fast(nx, nv, dt, 1) # warmup
 @time t, nrj = landau_fast(nx, nv, dt, nt)
 plot(t, nrj; label = "|E|²", yaxis = :log)
 line, ω, = fit_complex_frequency(t, nrj)
