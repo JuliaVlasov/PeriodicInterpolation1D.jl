@@ -64,5 +64,6 @@ include("bsplines.jl")
 include("spectral.jl")
 include("fast_lagrange.jl")
 include("lagrange.jl")
+include("cubic_interp.jl")
 
 end # module
