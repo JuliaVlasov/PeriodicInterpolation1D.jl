@@ -23,8 +23,40 @@ function uniform_bsplines_eval_basis(p::Int, x::Float64)
     return bspl
 end
 
-export BSpline
+export BSpline, interpolate!
 
+"""
+    BSpline(nx, order)
+
+Create a B-spline interpolation object for periodic 1D grids.
+
+B-spline interpolation provides smooth interpolation with controllable accuracy via the
+spline order. This implementation uses FFT for efficient periodic boundary handling via
+circulant matrix properties.
+
+# Arguments
+- `nx::Int`: Grid size (number of points)
+- `order::Int`: **Even** spline degree. Common choices: 2, 4, 6, 8
+  - Order 2: linear B-splines
+  - Order 4: cubic B-splines (smooth C² continuity)
+  - Order 6: quintic B-splines (smooth C⁴ continuity)
+
+# Fields
+- `nx::Int`: Grid size
+- `order::Int`: Spline order
+- `eigvals_M::Vector{Float64}`: Eigenvalues of the B-spline mass matrix
+- `eigvals_S::Vector{ComplexF64}`: Eigenvalues at displaced points (working array)
+- `eikx::Vector{ComplexF64}`: Precomputed phase factors
+- `ufft::Vector{ComplexF64}`: FFT workspace
+
+# Errors
+- Raises an error if `order` is odd
+
+# Example
+```julia
+bspl = BSpline(100, 4)  # cubic B-splines on 100-point grid
+```
+"""
 struct BSpline
 
     nx::Int
@@ -66,12 +98,34 @@ end
 
 modulo(a,p) = a - floor(Int, a / p) * p
 
-function interpolate!(
-    u_out::Vector{Float64},
-    interpolant::BSpline,
-    u::Vector{Float64},
-    alpha::Float64,
-)
+"""
+    interpolate!(u_out, bspl::BSpline, u, alpha)
+
+Interpolate array `u` by a displacement `alpha` (in grid units) using B-spline basis.
+
+# Arguments
+- `u_out::AbstractVector`: Output array (will be modified in-place)
+- `bspl::BSpline`: B-spline interpolation object
+- `u::AbstractVector`: Input array (periodic boundary conditions assumed)
+- `alpha::Float64`: Shift amount in grid-point units
+
+# Description
+This function computes interpolation using:
+1. B-spline basis functions evaluated at the fractional offset
+2. FFT for efficient circulant matrix-vector products
+3. Periodic boundary conditions
+
+Provides smooth interpolation with accuracy proportional to the spline order.
+
+# Example
+```julia
+bspl = BSpline(100, 4)
+f = sin.(2π .* (0:99) ./ 100)
+f_interp = zeros(100)
+interpolate!(f_interp, bspl, f, 0.3)  # shift by 0.3 grid points
+```
+"""
+function interpolate!( u_out, interpolant::BSpline, u, alpha::Float64 )
 
    p = interpolant.order - 1
    nx = interpolant.nx

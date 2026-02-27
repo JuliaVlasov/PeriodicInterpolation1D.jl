@@ -20,34 +20,35 @@ I use this to test some Julia packages for software engineering such as:
 
 ## Overview
 
-This module provides Lagrange, B-splines and Spectral interpolation functions for uniform grids. It supports odd-order (3, 5, 7, 9, 11 points) for Lagrange and B-splines.
+This module provides **four different interpolation methods** for periodic 1D uniform grids:
 
-## Authors
+| Method | Type | Accuracy | Speed | Use Case |
+|--------|------|----------|-------|----------|
+| **[Lagrange]** | Global FFT-based | Spectral | Medium | High accuracy, smooth functions |
+| **[BSpline]** | Smooth basis | Polynomial | Medium | Smooth interpolation, flexibility |
+| **[Spectral]** | Fourier-based | Exponential | Medium | Maximum accuracy for smooth data |
+| **[FastLagrange]** | Local stencil | Polynomial | Fast | Performance-critical, small shifts |
 
-- Original Fortran: Klaus Reuter (MPCDF), Katharina Kormann (RUB), Michel Mehrenberger (I2M)
-- Julia Translation: Pierre Navaro (IRMAR)
+All methods assume periodic boundary conditions. See the [full documentation](https://juliavlasov.github.io/PeriodicInterpolation1D.jl/) for detailed information.
 
-## Reference
-
-Based on formulas from Abramowitz and Stegun: Handbook of Mathematical Functions, Chapter 25.2
-
-## Installation
-
-Include the module in your Julia code:
+## ⚡ Quick Start
 
 ```julia
 using PeriodicInterpolation1D
-```
 
-## Quick Start Examples
-
-### Example: Lagrange Interpolation 
-
-```julia
+# Create sample data on a 100-point periodic grid
 n = 100
-fi = sin.(LinRange(0, 2π, n+1)[1:end-1]) # removes the last point
-fp = zeros(n)
-interpolant = Lagrange(7)
-displacement = 0.5
-interpolate!(fp, interpolant, fi, displacement)
+x = 2π .* (0:n-1) ./ n
+f = sin.(x)
+f_interp = zeros(n)
+
+# Interpolate using Lagrange polynomials with 0.5 grid-point shift
+lagr = Lagrange(n, 5)  # 5-point stencil
+interpolate!(f_interp, lagr, f, 0.5)
+
+# Or use other methods:
+# bspl = BSpline(n, 4)
+# spec = Spectral(n)
+# fast = FastLagrange(7)
+# interpolate!(f_interp, bspl, f, 0.5)
 ```
