@@ -4,12 +4,13 @@ This page describes the different interpolation methods available in `PeriodicIn
 
 ## Overview
 
-The module provides four interpolation methods for periodic 1D grids on uniform meshes:
+The module provides five interpolation methods for periodic 1D grids on uniform meshes:
 
 1. **[Lagrange](@ref)** - Global FFT-based Lagrange polynomials
 2. **[BSpline](@ref)** - B-spline basis functions  
 3. **[Spectral](@ref)** - Pure Fourier spectral interpolation
 4. **[FastLagrange](@ref)** - Local Lagrange polynomials
+5. **[CubicSpline](@ref)** - Cubic-spline interpolation (uses `FastInterpolations.jl` for speed)
 
 ## Method Comparison
 
@@ -19,6 +20,7 @@ The module provides four interpolation methods for periodic 1D grids on uniform 
 | BSpline | Polynomial order | Medium | Medium | Smooth interpolation, flexibility |
 | Spectral | Exponential | Medium | Medium | Very smooth data, maximum accuracy |
 | FastLagrange | Polynomial order | Fast | Low | Small shifts, performance-critical code |
+| CubicSpline | Cubic | Fast | Medium | Smooth cubic-spline interpolation (fast with FastInterpolations.jl) |
 
 ## Detailed Method Descriptions
 
@@ -124,6 +126,27 @@ interpolate!(f_interp, fast_lag, f, 0.1)  # small shift recommended
 - Unstable for large shifts
 - Lower accuracy than spectral methods
 - Must keep shifts small
+
+### Cubic Spline Interpolation
+
+The `CubicSpline` method performs cubic-spline interpolation on a periodic
+uniform grid. Internally this adapter delegates to `FastInterpolations.jl`'s
+`cubic_interp!` routine and applies periodic boundary conditions. It offers a
+good balance between smoothness and performance for many practical problems.
+
+```julia
+cs = CubicSpline(n)
+interpolate!(u_out, cs, u, 0.25)
+```
+
+**Advantages:**
+- Smooth cubic interpolation with C^2 continuity
+- Fast implementations available via `FastInterpolations.jl`
+
+**Disadvantages:**
+- Requires the `FastInterpolations.jl` dependency for the high-performance
+   backend used here
+- Not spectrally accurate like FFT-based methods
 
 ## Accuracy Comparison
 
