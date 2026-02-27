@@ -85,23 +85,12 @@ Each method shows:
 """
 
 using Plots
-using FFTW
 using PeriodicInterpolation1D
 using LinearAlgebra
-import Statistics: mean
 
-struct UniformMesh
-    xmin::Float64
-    xmax::Float64
-    nx::Int
-    dx::Float64
-    x::Vector{Float64}
-    function UniformMesh(xmin, xmax, nx)
-        dx = (xmax - xmin) / nx
-        x = LinRange(xmin, xmax, nx + 1)[1:(end - 1)]
-        return new(xmin, xmax, nx, dx, x)
-    end
-end
+include("uniform_mesh.jl")
+include("compute_rho.jl")
+include("compute_e.jl")
 
 function advection!(
         f::Array{Float64, 2},
@@ -121,28 +110,6 @@ function advection!(
     end
 
     return
-end
-
-function compute_rho(
-        meshv::UniformMesh,
-        f::Array{Float64, 2}
-    )
-
-    dv = meshv.dx
-    rho = dv * sum(f, dims = 2)
-    return vec(rho .- mean(rho))
-end
-
-function compute_e(meshx::UniformMesh, rho::Vector{Float64})
-    nx = meshx.nx
-    k = 2pi / (meshx.xmax - meshx.xmin)
-    modes = zeros(Float64, nx)
-    modes .= k * fftfreq(nx, nx)
-    modes[1] = 1.0
-    rhok = fft(rho) ./ modes
-    rhok .*= -1im
-    ifft!(rhok)
-    return real(rhok)
 end
 
 function landau(nx, nv, dt, nt::Int64, interpolant_x, interpolant_v)
@@ -186,19 +153,28 @@ end
 p = 7
 nx, nv = 64, 128
 dt, nt = 0.01, 10000
+landau(nx, nv, dt, 1, FastLagrange(p), FastLagrange(p))
 @time t, nrj = landau(nx, nv, dt, nt, FastLagrange(p), FastLagrange(p))
 plot(t, -0.1533 * t .- 5.5; label = "-0.1533t.-5.5")
 plot!(t, nrj; label = "Fast Lagrange")
 @info "Lagrange"
 dt, nt = 0.1, 1000
+landau(nx, nv, dt, 1, Lagrange(nx, p), Lagrange(nv, p))
 @time t, nrj = landau(nx, nv, dt, nt, Lagrange(nx, p), Lagrange(nv, p))
 plot(t, -0.1533 * t .- 5.5; label = "-0.1533t.-5.5")
 plot!(t, nrj; label = "Lagrange")
 @info "Spectral"
 dt, nt = 0.1, 1000
+landau(nx, nv, dt, 1, Spectral(nx), Spectral(nv))
 @time t, nrj = landau(nx, nv, dt, nt, Spectral(nx), Spectral(nv))
 plot!(t, nrj; label = "Spectral")
 @info "B-splines"
 dt, nt = 0.1, 1000
+landau(nx, nv, dt, 1, BSpline(nx, 6), BSpline(nv, 6))
 @time t, nrj = landau(nx, nv, dt, nt, BSpline(nx, 6), BSpline(nv, 6))
 plot!(t, nrj; label = "B-splines")
+@info "Cubic-splines"
+dt, nt = 0.1, 1000
+landau(nx, nv, dt, 1, CubicSpline(nx), CubicSpline(nv))
+@time t, nrj = landau(nx, nv, dt, nt, CubicSpline(nx), CubicSpline(nv))
+plot!(t, nrj; label = "Cubic-splines")

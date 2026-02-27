@@ -18,6 +18,8 @@ I use this to test some Julia packages for software engineering such as:
 - [PkgBenchmark.jl](https://github.com/JuliaCI/PkgBenchmark.jl)
 - [TestItemRunner](https://github.com/julia-vscode/TestItemRunner.jl)
 
+- [FastInterpolations.jl](https://github.com/ProjectTorreyPines/FastInterpolations.jl) — used for cubic splines interpolation; it's really fast. Many thanks to the author(s) and maintainers for their excellent work.
+
 ## Overview
 
 This module provides **four different interpolation methods** for periodic 1D uniform grids:
