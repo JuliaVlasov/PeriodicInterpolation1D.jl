@@ -21,16 +21,16 @@ for i in 1:num_points
     xp[i] = xi[i] + alpha
 end
 
-SUITE["fast_lagrange_3"] = @benchmarkable interpolate!(fp, FastLagrange(3), alpha)
-SUITE["fast_lagrange_5"] = @benchmarkable interpolate!(fp, FastLagrange(5), alpha)
-SUITE["fast_lagrange_7"] = @benchmarkable interpolate!(fp, FastLagrange(7), alpha)
+SUITE["fast_lagrange_3"] = @benchmarkable interpolate!(fp, FastLagrange(3), fi, alpha)
+SUITE["fast_lagrange_5"] = @benchmarkable interpolate!(fp, FastLagrange(5), fi, alpha)
+SUITE["fast_lagrange_7"] = @benchmarkable interpolate!(fp, FastLagrange(7), fi, alpha)
 
-SUITE["lagrange_3"] = @benchmarkable interpolate!(fp, Lagrange(num_points, 3), alpha)
-SUITE["lagrange_5"] = @benchmarkable interpolate!(fp, Lagrange(num_points, 5), alpha)
-SUITE["lagrange_7"] = @benchmarkable interpolate!(fp, Lagrange(num_points, 7), alpha)
+SUITE["lagrange_3"] = @benchmarkable interpolate!(fp, Lagrange(num_points, 3), fi, alpha)
+SUITE["lagrange_5"] = @benchmarkable interpolate!(fp, Lagrange(num_points, 5), fi, alpha)
+SUITE["lagrange_7"] = @benchmarkable interpolate!(fp, Lagrange(num_points, 7), fi, alpha)
 
-SUITE["bsplines_3"] = @benchmarkable interpolate!(fp, BSplines(num_points, 3), alpha)
-SUITE["bsplines_5"] = @benchmarkable interpolate!(fp, BSplines(num_points, 5), alpha)
-SUITE["bsplines_7"] = @benchmarkable interpolate!(fp, BSplines(num_points, 7), alpha)
+SUITE["bsplines_4"] = @benchmarkable interpolate!(fp, BSpline(num_points, 4), fi, alpha)
+SUITE["bsplines_6"] = @benchmarkable interpolate!(fp, BSpline(num_points, 6), fi, alpha)
+SUITE["bsplines_8"] = @benchmarkable interpolate!(fp, BSpline(num_points, 8), fi, alpha)
 
-SUITE["spectral"] = @benchmarkable interpolate!(fp, Spectral(num_points), alpha)
+SUITE["spectral"] = @benchmarkable interpolate!(fp, Spectral(num_points), fi, alpha)
